@@ -187,9 +187,12 @@ Browsing to `localhost:3000` greets us with:
 
 MVC (Model-View-Controller) has been a proven approach for organizing code for decades where the:
 
-- **Model**:  Is the data concern
-- **View**:  Is the presentation concern
-- **Controller**:  Is the "processing" concern that processes the HTTP requests coming from the browser, CRUDs (Creates/Reads/Updates/Deletes) data using models, and ultimately responds to the browser's request by rendering views and returning the resulting HTML or by issuing a redirect. 
+- **Model:** Represents the data concern and encapsulates the business logic of the application. It manages and manipulates the data.
+
+- **View:** Represents the presentation concern and is responsible for displaying data to users and capturing user input.
+
+- **Controller:** Acts as the processing concern in the MVC architecture. It receives HTTP requests from the browser, processes them by performing CRUD operations on the data using models, and ultimately responds to the browser's request. This response can involve rendering views, returning resulting HTML, or issuing a redirect. The controller controls the flow of data and the overall behavior of the application, serving as an intermediary between the Model and the View.
+
 
 ### MVC in Express
 
