@@ -339,18 +339,25 @@ We're going to refactor the To-Do code from yesterday to follow best practices b
 - Here's the EJS from yesterday to copy/paste (replacing the existing `<body>` element):
 
 	```html
-	 <body>
-	   <h1>Todos</h1>
-	   <ul>
-	     <% todos.forEach(function(t) { %>
-	       <li>
-	         <%= t.todo %>
-	           - 
-	         <%= t.done ? 'done' : 'not done' %>
-	       </li>
-	     <% }); %>
-	   </ul>
-	 </body>
+	<!DOCTYPE html>
+	<html>
+	    <head>
+	        <title><%= title %></title>
+	        <link rel='stylesheet' href='/stylesheets/style.css' />
+	    </head>
+	    <body>
+	        <h1>Express To-Do</h1>
+	        <ul>
+	        <% todos.forEach( todo => { %>
+	            <li>
+	            <%= todo.todo %>
+	                - 
+	            <%= todo.done ? 'done' : 'not done' %>
+	            </li>
+	        <% }); %>
+	        </ul>
+	    </body>
+	  <html>
 	```
 
 ### To-Do Refactor - `models/todo.js`
@@ -373,14 +380,16 @@ We're going to refactor the To-Do code from yesterday to follow best practices b
       {id: 127904, todo: 'Learn Express', done: false},
       {id: 139608, todo: 'Buy Milk', done: false}
     ];
-	
+
+ 
+	const getAll = () => {
+	  return todos;
+	}
+ 
 	module.exports = {
 	  getAll
 	};
 	
-	function getAll() {
-	  return todos;
-	}
 	```
 	Look it over - any questions?
 
@@ -450,6 +459,7 @@ In a web application that follows the MVC architectural pattern, **controllers**
 - Handle the request coming from the client (browser).
 - Implement the application logic such as using Models to perform CRUD data operations (create, retrieve, update & delete), fetching data from an API, etc.
 - Respond to the request by rendering views (often passing data to them) or issuing a redirect.
+- Sespond with json in the case of a React app. 
 
 Controller functions are no different than the inline functions that we've already seen!
 
@@ -469,9 +479,10 @@ We just want to separate our concerns, i.e., we want to separate the **route def
 	```js
   // controllers/todos.js
 
-	function index(req, res) {
+	const index = (req, res) => {
+	  todos = Todo.getAll();
 	  res.render('todos/index', {
-	    todos: Todo.getAll()
+	    todos 
 	  });
 	}
 	```
@@ -481,17 +492,19 @@ We just want to separate our concerns, i.e., we want to separate the **route def
 	```js
 	// controllers/todos.js
 
-	module.exports = {
-	  index
-	};
 	
-	function index(req, res) {
+	const index = (req, res) => {
+	  todos = Todo.getAll();
 	  res.render('todos/index', {
-	    todos: Todo.getAll()
+	    todos 
 	  });
 	}
+ 
+	module.exports = {
+	    index
+	  };
 	```
-	> A common approach is to export an object near the top because you don't have to scroll to the bottom of the module to see what functionality is being exported.
+	> A common approach is to export an object near the top because you don't have to scroll to the bottom of the module to see what functionality is being exported.  However, in order to do this your functions must be written in the function declaration style due to the way hoisting works with arrow functions.  So instead, we're going to export our controller module's functionality beneath our functions.  
 
 - Yup, the controller module is going to need to require that Todo model:
 
@@ -500,10 +513,17 @@ We just want to separate our concerns, i.e., we want to separate the **route def
 
 	// Convention is to name the model in uppercase and singular
 	const Todo = require('../models/todo');
-
+ 
+	const index = (req, res) => {
+	  todos = Todo.getAll();
+	  res.render('todos/index', {
+	    todos 
+	  });
+	}
+ 
 	module.exports = {
-	  index
-	};
+	    index
+	  };
 	```
 
 ### Test the Refactor!
@@ -527,13 +547,10 @@ Hey, let's add a link on **views/index.ejs** so that we can click it to see the 
 	  </body>
 	</html>
 	```
-
-- For styling, let's copy that `<link>` over to **todos/index.ejs** and...
-
 - In **routes/index.js**, fix the value of the `title` property being passed to the view:
 
 	```js
-	res.render('index', { title: 'Express To-Do' });
+	res.render('index', { title: 'Express To-do' });
 	```
 	That's better!
 
