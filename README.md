@@ -480,11 +480,11 @@ We just want to separate our concerns, i.e., we want to separate the **route def
   // controllers/todos.js
 
 	const index = (req, res) => {
-	  todos = Todo.getAll();
+	  const todos = Todo.getAll();
 	  res.render('todos/index', {
 	    todos 
 	  });
-	}
+	};
 	```
 
 - Let's export the `index` controller method (also know as a controller action):
@@ -494,11 +494,11 @@ We just want to separate our concerns, i.e., we want to separate the **route def
 
 	
 	const index = (req, res) => {
-	  todos = Todo.getAll();
+	  const todos = Todo.getAll();
 	  res.render('todos/index', {
 	    todos 
 	  });
-	}
+	};
  
 	module.exports = {
 	    index
@@ -515,11 +515,11 @@ We just want to separate our concerns, i.e., we want to separate the **route def
 	const Todo = require('../models/todo');
  
 	const index = (req, res) => {
-	  todos = Todo.getAll();
+	  const todos = Todo.getAll();
 	  res.render('todos/index', {
 	    todos 
 	  });
-	}
+	};
  
 	module.exports = {
 	    index
@@ -624,9 +624,9 @@ With the proper route identified, the next step is to create some UI that will s
 Let's refactor **todos/index.ejs** as follows:
 
 ```html
-<% todos.forEach(function(t) { %>
+<% todos.forEach( todo => { %>
   <li>
-    <a href="/todos/<%= t.id %>"><%= t.todo %></a>
+    <a href="/todos/<%= todo.id %>"><%= todo.todo %></a>
 ```
 
 Refresh the page and hover over the links. Looking at the bottom-left of the window will verify the paths look correct!
@@ -666,11 +666,12 @@ Saving will crash the app because there is no `todosCtrl.show` method being expo
 Add the `show` action inside of **controllers/todos.js** and don't forget to export it!
 
 ```js
-function show(req, res) {
-  res.render('todos/show', {
-    todo: Todo.getOne(req.params.id),
+const show = (req, res) => {
+    const todo = Todo.getOne(req.params.id);
+    res.render('todos/show', {
+        todo 
   });
-}
+};
 ```
 
 > **KEY POINT:**  Express's `req.params` object will have a property for each **route parameter** defined, for example...
@@ -701,18 +702,14 @@ Another refresh informs us that the `show` action in the controller is calling a
 Let's fix that error! In **models/todo.js**:
 
 ```js
-module.exports = {
-  getAll,
-  getOne
-};
+  getOne = (id) => {
+    return todos.find(todo => todo.id === parseInt(id));
+  }
 
-function getOne(id) {
-  // URL params are strings - convert to a number
-  id = parseInt(id);
-  // The Array.prototype.find iterator method is
-  // ideal for finding objects within an array
-  return todos.find(todo => todo.id === id);
-}
+  module.exports = {
+    getAll,
+    getOne
+  };
 ```	
 
 Refresh and of course there's an error because we haven't created the  **views/todos/show.ejs** that we're trying to render.
