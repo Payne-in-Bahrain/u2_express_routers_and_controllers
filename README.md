@@ -26,7 +26,7 @@
 
 ## 1. Setup
 
-To get ready for this lesson, simply `cd ~/code`.
+To get ready for this lesson, fork and clone this repo, then simply `cd ~/code` and `git clone <your repo url here>`.
 
 ## 2. Express Generator
 
